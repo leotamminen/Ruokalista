@@ -1,31 +1,30 @@
 const express = require("express");
-const cors = require("cors");
-const path = require("path");
+const axios = require("axios");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Enable CORS for all requests
-app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
-// Serve static files from the current directory
-app.use(express.static(path.join(__dirname)));
+app.get("/api/menu", async (req, res) => {
+  const date = req.query.date || new Date().toISOString().split("T")[0]; // Default to today if no date provided
+  const url = `https://www.unica.fi/api/restaurant/menu/day?date=${date}&language=fi&onlyPublishedMenu=true&restaurantPageId=297238`;
 
-// Proxy endpoint
-app.get("/proxy", async (req, res) => {
-  const url = req.query.url;
   try {
-    const fetch = (await import("node-fetch")).default; // Dynamic import
-    const response = await fetch(url);
-    const data = await response.text(); // Get raw text response
-    res.json({ contents: data }); // Send back the response
+    const response = await axios.get(url);
+    res.json(response.data);
   } catch (error) {
-    console.error("Error fetching the URL:", error);
-    res.status(500).send("Error fetching the URL");
+    res.status(500).send("Error fetching data");
   }
 });
 
-// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`CORS proxy running on http://localhost:${PORT}`);
 });

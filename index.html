@@ -37,8 +37,7 @@
         const dd = String(today.getDate()).padStart(2, "0");
         const dateString = `${yyyy}-${mm}-${dd}`;
 
-        // Use a public CORS proxy (not recommended for production)
-        const apiUrl = `https://cors-anywhere.herokuapp.com/https://www.unica.fi/api/restaurant/menu/day?date=${dateString}&language=fi&onlyPublishedMenu=true&restaurantPageId=297238`;
+        const apiUrl = `https://<https://leotamminen.github.io/Ruokalista/>/api/menu?date=${dateString}`;
 
         try {
           const response = await fetch(apiUrl);
