@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assarin ruokalista</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        color: #333;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        background: #f4f4f4;
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tänään on ruokana</h1>
+    <ul id="meal-list"></ul>
+
+    <script>
+      // Function to fetch today's menu data
+      async function fetchMenuData() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+        const dd = String(today.getDate()).padStart(2, "0");
+        const dateString = `${yyyy}-${mm}-${dd}`;
+
+        const apiUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(
+          "https://www.unica.fi/api/restaurant/menu/day?date=" +
+            dateString +
+            "&language=fi&onlyPublishedMenu=true&restaurantPageId=297238"
+        )}`;
+
+        try {
+          const response = await fetch(apiUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          const jsonData = JSON.parse(data.contents); // Parse the contents as JSON
+
+          // Clear previous meal list
+          const mealList = document.getElementById("meal-list");
+          mealList.innerHTML = "";
+
+          // Extract and display meal names
+          const setMenus = jsonData.LunchMenu.SetMenus;
+          setMenus.forEach((setMenu) => {
+            if (setMenu.Meals && setMenu.Meals.length) {
+              setMenu.Meals.forEach((meal) => {
+                const li = document.createElement("li");
+                li.textContent = meal.Name;
+                mealList.appendChild(li);
+              });
+            }
+          });
+        } catch (error) {
+          console.error("Error fetching menu data:", error);
+        }
+      }
+
+      // Fetch menu data when the page loads
+      fetchMenuData();
+    </script>
+  </body>
+</html>
