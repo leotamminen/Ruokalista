@@ -25,7 +25,7 @@
     </style>
   </head>
   <body>
-    <h1>Tänään on Aurumissa ruoaksi</h1>
+    <h1>Tänään on Aurumilla ruoaksi</h1>
     <ul id="meal-list"></ul>
 
     <script>
@@ -45,19 +45,21 @@
           const data = await response.json();
           const responseText = data.contents; // Get the actual HTML content
 
-          // Load the response HTML into cheerio
-          const $ = cheerio.load(responseText);
+          // Parse the response HTML using DOMParser
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(responseText, "text/html");
 
           // Aurum section is in the div where img alt="Aurum"
-          const aurumSection = $("div.lunch-item-left img[alt='Aurum']")
+          const aurumSection = doc
+            .querySelectorAll("div.lunch-item-left img[alt='Aurum']")[0]
             .closest("div.lunch-item")
-            .find(".meals .meal");
+            .querySelectorAll(".meals .meal");
 
           let meals = [];
 
           // Meal names
-          aurumSection.each((index, element) => {
-            let mealName = $(element).find(".food").text().trim();
+          aurumSection.forEach((element) => {
+            let mealName = element.querySelector(".food").textContent.trim();
             meals.push(mealName);
           });
 
@@ -69,14 +71,14 @@
             const li = document.createElement("li");
             li.textContent = "Ei ruokia saatavilla.";
             mealList.appendChild(li);
+          } else {
+            // Display the meals in the list
+            meals.forEach((mealName) => {
+              const li = document.createElement("li");
+              li.textContent = mealName;
+              mealList.appendChild(li);
+            });
           }
-
-          // Display the meals in the list
-          meals.forEach((mealName) => {
-            const li = document.createElement("li");
-            li.textContent = mealName;
-            mealList.appendChild(li);
-          });
         } catch (error) {
           console.error("Error fetching menu data:", error);
 
