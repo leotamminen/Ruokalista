@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kårenin ruokalista</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        color: #333;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        background: #f4f4f4;
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tänään on Kårenissa ruoaksi</h1>
+    <ul id="meal-list"></ul>
+
+    <script>
+      const apiUrl = "https://www.karkafeerna.fi/fi/lounas/";
+
+      // Function to fetch menu data
+      async function fetchMenuData() {
+        try {
+          const response = await fetch(apiUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          // Get the response as text
+          const responseText = await response.text();
+
+          // Load the response HTML into cheerio
+          const $ = cheerio.load(responseText);
+
+          // Kåren section is in the div where img alt="Kåren"
+          const karenSection = $("div.lunch-item-left img[alt='Kåren']")
+            .closest("div.lunch-item")
+            .find(".meals .meal");
+
+          let meals = [];
+
+          // Meal names
+          karenSection.each((index, element) => {
+            let mealName = $(element).find(".food").text().trim();
+            meals.push(mealName);
+          });
+
+          // Get the meal list element in the DOM
+          const mealList = document.getElementById("meal-list");
+
+          // If no meals were found
+          if (meals.length === 0) {
+            const li = document.createElement("li");
+            li.textContent = "Ei ruokia saatavilla.";
+            mealList.appendChild(li);
+          }
+
+          // Display the meals in the list
+          meals.forEach((mealName) => {
+            const li = document.createElement("li");
+            li.textContent = mealName;
+            mealList.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Error fetching menu data:", error);
+
+          // Show error message in case of failure
+          const mealList = document.getElementById("meal-list");
+          const li = document.createElement("li");
+          li.textContent = "Ruokalistaa ei voida ladata tällä hetkellä.";
+          mealList.appendChild(li);
+        }
+      }
+
+      // Fetch and display the menu data when the page loads
+      fetchMenuData();
+    </script>
+  </body>
+</html>
