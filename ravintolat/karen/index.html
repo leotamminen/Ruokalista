@@ -29,7 +29,10 @@
     <ul id="meal-list"></ul>
 
     <script>
-      const apiUrl = "https://www.karkafeerna.fi/fi/lounas/";
+      // aad CORS Proxy URL
+      const apiUrl =
+        "https://api.allorigins.win/get?url=" +
+        encodeURIComponent("https://www.karkafeerna.fi/fi/lounas/");
 
       // Function to fetch menu data
       async function fetchMenuData() {
@@ -39,8 +42,8 @@
             throw new Error(`HTTP error! status: ${response.status}`);
           }
 
-          // Get the response as text
-          const responseText = await response.text();
+          const data = await response.json();
+          const responseText = data.contents; // Get the actual HTML content
 
           // Load the response HTML into cheerio
           const $ = cheerio.load(responseText);

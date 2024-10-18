@@ -29,7 +29,10 @@
     <ul id="meal-list"></ul>
 
     <script>
-      const apiUrl = "https://www.karkafeerna.fi/fi/lounas/";
+      // add CORS Proxy URL
+      const apiUrl =
+        "https://api.allorigins.win/get?url=" +
+        encodeURIComponent("https://www.karkafeerna.fi/fi/lounas/");
 
       // Function to fetch menu data
       async function fetchMenuData() {
@@ -39,13 +42,13 @@
             throw new Error(`HTTP error! status: ${response.status}`);
           }
 
-          // Get the response as text
-          const responseText = await response.text();
+          const data = await response.json();
+          const responseText = data.contents; // Get the actual HTML content
 
           // Load the response HTML into cheerio
           const $ = cheerio.load(responseText);
 
-          // aurum section is in the div where img alt="Aurum"
+          // Aurum section is in the div where img alt="Aurum"
           const aurumSection = $("div.lunch-item-left img[alt='Aurum']")
             .closest("div.lunch-item")
             .find(".meals .meal");
