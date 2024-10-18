@@ -1,14 +1,15 @@
-// Define the URL
+// Assari
 const apiUrl =
   "https://www.unica.fi/api/restaurant/menu/day?date=2024-9-24&language=fi&onlyPublishedMenu=true&restaurantPageId=297238";
 
+//
+// File not used at this point. Saved if need later.
+//
 // Assari=  https://www.unica.fi/api/restaurant/menu/day?date=${date}&language=fi&onlyPublishedMenu=true&restaurantPageId=297238
 // Kulma=   https://www.unica.fi/api/restaurant/menu/day?date=${date}&language=fi&onlyPublishedMenu=true&restaurantPageId=315929
 // Galilei= https://www.unica.fi/api/restaurant/menu/day?date=${date}&language=fi&onlyPublishedMenu=true&restaurantPageId=299771
 
-// karkafeerna api
-// Aurum=   ??
-// Kåren=   ??
+// karkafeerna; aurum and kåren uses https://www.karkafeerna.fi/fi/lounas/
 
 // Function to fetch menu data
 async function fetchMenuData() {

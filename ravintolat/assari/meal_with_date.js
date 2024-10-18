@@ -2,9 +2,13 @@
 const args = process.argv.slice(2);
 const date = args[0] || new Date().toISOString().split("T")[0]; // Default to today
 
+//
+// File not used at this point. Saved if need later.
+//
+
 console.log(date);
 
-// Define the URL
+// Assari
 const apiUrl = `https://www.unica.fi/api/restaurant/menu/day?date=${date}&language=fi&onlyPublishedMenu=true&restaurantPageId=297238`;
 
 // Function to fetch menu data
